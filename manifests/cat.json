@@ -7,6 +7,7 @@
     "bin": [
         "bin/cat.ps1"
     ],
+    "architecture": "noarch",
     "checkver": {
         "url": "https://github.com/RushiChaganti/psutils/releases/latest",
         "regex": "cat-v(\\d+\\.\\d+\\.\\d+)\\.ps1"
