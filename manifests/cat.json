@@ -25,6 +25,7 @@
     "autoupdate": {
         "url": [
             "https://raw.githubusercontent.com/RushiChaganti/psutils/$matchSha/bin/cat.ps1",
-            "https://raw.githubusercontent.com/RushiChaganti/psutils/$matchSha/bin/cat-help.ps1"        ]
+            "https://raw.githubusercontent.com/RushiChaganti/psutils/$matchSha/bin/cat-help.ps1"
+        ]
     }
 }
