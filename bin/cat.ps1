@@ -1,51 +1,52 @@
-Set-StrictMode -Off;
+Set-StrictMode -Off
 
-$usage = @"
-usage:
-cat [-A] [-b] [-E] [-n] [-s] [-T] [-v] file ...
-"@
-
-$flags  = 'bEnsT'.ToCharArray()             # defines options without a parameter
-$pflags = 'A'.ToCharArray()                 # defines options with a parameter
-$opts   = New-Object Collections.Hashtable  # stores parsed options (case-sensitive keys)
-$files  = @()                               # stored parsed files
-
-function dbg($msg) { Write-Host $msg -ForegroundColor DarkYellow }  # for debugging
-function expand($path) {
-    $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($path)
+# Check for no arguments
+if ($args.Length -eq 0) {
+    Write-Host "usage: cat [-A] [-b] [-E] [-h] [-help] [-n] [-s] [-T] [-v] file ..."
+    exit 1
 }
+
+$flags  = 'bEnsThv'.ToCharArray()           # defines options without a parameter
+$pflags = 'A'.ToCharArray()                 # defines options with a parameter
+$opts   = @{}                               # stores parsed options (case-sensitive keys)
+$files  = @()                               # stores parsed files
 
 # parse flags
 for ($i = 0; $i -lt $args.Length; $i++) {
     $arg = $args[$i]
     if ($arg.StartsWith('-')) {
-        $flag = $arg[1]
+        $flag = $arg.Substring(1)
 
-        if (($pflags -ccontains $flag) -and ($arg.Length -eq 2)) {
+        if ($pflags -contains $flag[0]) {
             # flag with a parameter
             if ($i -eq $args.Length - 1) {
-                "cat: $flag requires a parameter"; $usage; exit 1
+                Write-Host "cat: $flag requires a parameter"
+                exit 1
             }
-            $opts[[string]$arg[1]] = $args[++$i]
-        } elseif ($flags -ccontains $flag) {
+            $opts[[string]$flag[0]] = $args[++$i]
+        } elseif ($flags -contains $flag[0]) {
             # flag(s) with no parameters (may be grouped together e.g. -bEnsT)
-            $opts[[string]$flag] = $true
-            for ($j = 2; $j -lt $arg.Length; $j++) {
-                $flag = $arg[$j]
-                if ($flags -ccontains $flag) { $opts[[string]$flag] = $true }
+            foreach ($f in $flag.ToCharArray()) {
+                if ($flags -contains $f) { $opts[[string]$f] = $true }
                 else {
-                    "cat: illegal option -- $flag"; $usage; exit 1
+                    Write-Host "cat: illegal option -- $f"
+                    exit 1
                 }
             }
         } else {
-            "cat: illegal option $($arg[1..($arg.Length - 1)])"; $usage; exit 1
+            Write-Host "cat: illegal option $flag"
+            exit 1
         }
     } else {
-        $files += $args[$i..($args.Length - 1)]; break # everything else is a file
+        $files += $args[$i..($args.Length - 1)]
+        break # everything else is a file
     }
 }
 
-if (-not $files) { $usage; exit 1 }
+if (-not $files) { 
+    Write-Host "usage: cat [-A] [-b] [-E] [-h] [-help] [-n] [-s] [-T] [-v] file ..."
+    exit 1 
+}
 
 $lineNumber = 1
 $previousLineEmpty = $false
