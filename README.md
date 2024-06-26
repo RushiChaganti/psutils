@@ -30,7 +30,7 @@ cd psutils/manifests
 ```
 Install psutils using Scoop:
 ```
-    scoop install cat.json
+scoop install cat.json
 ```
 ### Usage
 
